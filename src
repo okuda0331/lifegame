@@ -1,0 +1,706 @@
+import java.applet.Applet;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Label;
+import java.awt.TextField;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.net.URL;
+import java.util.Random;
+
+import javax.swing.JPanel;
+
+
+/*
+<applet code = "lifegame4.class" width="500" height = "500"></applet>
+*/
+
+public class lifegame4 extends Applet implements Runnable,
+MouseListener,MouseMotionListener,MouseWheelListener,
+ActionListener{
+	Image image;
+	boolean im;
+boolean ss;
+boolean koma;
+boolean setumei;
+boolean ha;
+boolean c;
+boolean hc;
+boolean f;
+    Thread th;
+    int cx1;
+    int cy1;
+    int cx2;
+    int cy2;
+    int cx3;
+    int cy3;
+    int x1;
+    int y1;
+    int n;
+    int wh;
+    int hi;
+    int wh2;
+    int hi2;
+    int s;
+    Image wi;
+    Graphics wg;
+boolean d1[][];
+boolean d2[][];
+
+boolean cd[][];
+Label lax = new Label("x:");
+Label lay = new Label("y:");
+Label las = new Label("s:");
+
+Label laf = new Label("復活の呪文:");
+Label lag = new Label("画像URL:");
+
+TextField txt[]=new TextField[5];
+Button b = new Button("停止");
+Button b2 = new Button("読み取り");
+Button b3 = new Button("書き込み");
+Button b4 = new Button("コマ送り");
+    Random r=new Random ();
+   // Image img;
+    public void init()
+    {
+    	im=true;
+
+    	//img = getImage(getDocumentBase(), "tutinoko.png");//Skeleton.png");
+x1=0;
+y1=0;
+    	wi=createImage(5000,5000);
+        wg=wi.getGraphics();
+n=100;
+    	ss=true;
+    	koma=false;
+    	setumei=true;
+ha=true;
+c=false;
+hc=true;
+f=false;
+    	s=22;
+    	wh=440/s+2;
+    	hi=440/s+2;
+    	image =createImage(wh, hi);
+    d1=new boolean[wh][hi];
+    d2=new boolean[wh][hi];
+    cd=new boolean[wh][hi];
+    for(int y=1;y<hi-1;y++)
+	    for(int x=1;x<wh-1;x++){
+	    	d1[x][y]=r.nextBoolean();
+	    	d2[x][y]=r.nextBoolean();
+	    }
+    }
+    public void start()
+    {
+    	setLayout(null);
+
+    	add(lax);
+    	add(lay);
+    	add(las);
+
+    	add(laf);
+    	add(lag);
+
+    	txt[0] = (TextField)add(new TextField(5));
+    	txt[1] = (TextField)add(new TextField(5));
+    	txt[2] = (TextField)add(new TextField(5));
+
+    	txt[3] = (TextField)add(new TextField(1000));
+    	txt[4] = (TextField)add(new TextField(1000));
+
+    	add(b);
+
+    	add(b2);
+    	add(b3);
+    	add(b4);
+
+    		lax.setBounds(0,0,20,20);
+    		lay.setBounds(120,0,20,20);
+    		las.setBounds(240,0,20,20);
+
+    		laf.setBounds(0,480,70,20);
+    		lag.setBounds(300,480,60,20);
+
+    		txt[0].setBounds(20,0,100,20);
+    		txt[1].setBounds(140,0,100,20);
+    		txt[2].setBounds(260,0,100,20);
+
+    		txt[3].setBounds(70,480,130,20);
+    		txt[4].setBounds(360,480,200,20);
+
+    		b.setBounds(470,0,30,20);
+    		b4.setBounds(400,0,60,20);
+
+    		b2.setBounds(200,480,50,20);
+    		b3.setBounds(250,480,50,20);
+
+    		//txt[0].contains(0,0);
+    		//txt[1].contains(5,0);
+    		txt[0].setText(""+wh);
+    		txt[1].setText(""+hi);
+    		txt[2].setText(""+n);
+    		txt[3].setText("C");
+    		txt[4].setText("none");
+
+    		txt[0].addActionListener(this);
+    		txt[1].addActionListener(this);
+    		txt[2].addActionListener(this);
+    		txt[3].addActionListener(this);
+    		txt[4].addActionListener(this);
+
+    		b.addActionListener(this);
+    		b2.addActionListener(this);
+    		b3.addActionListener(this);
+    		b4.addActionListener(this);
+    	addMouseWheelListener(this);
+    	addMouseListener(this);
+    	addMouseMotionListener(this);
+        th = new Thread(this);
+        th.start();
+    }
+    public void run()
+    {
+    	while(true){
+    		if(f){ GraphicsDevice device=GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    		NoFrameWindowOld window=new NoFrameWindowOld();
+			window.setBounds(0,0,dim.width,dim.height+50);	//***下のバーが画面下に隠れるようにする***
+			window.setVisible(true);
+			window.toFront();
+
+
+			}else
+        while(ss){
+        	nextGeneration();
+
+        }
+
+        }
+
+        }
+
+    public void paint(Graphics g){
+    	if(!f){
+if(setumei) MyExplanation();
+else{
+
+
+
+    	wg.setColor(Color.black);
+
+if(im)
+    	for(int y=0;y<hi-2;y++)
+for(int x=0;x<wh-2;x++)
+	if(d2[x+1][y+1]){
+		wg.setColor(Color.BLACK);
+		wg.fillRect(x*s+30+x1,y*s+30+y1,s,s);
+		//g.drawImage(img, x*s+10+x1, y*s+20+y1,s,s, this);
+	}else{
+		wg.setColor(new Color(0xff,0xff,0xff,0x10));
+		wg.setColor(Color.white);
+		wg.fillRect(x*s+30+x1,y*s+30+y1,s,s);
+	}
+else{
+	wg.setColor(new Color(0xff,0xff,0xff,0x7f));
+	wg.fillRect(0,0,500,500);
+	for(int y=0;y<hi-2;y++)
+		for(int x=0;x<wh-2;x++)
+	if(d2[x+1][y+1]){
+		wg.drawImage(image, x*s+30+x1,y*s+30+y1,s,s, this);
+	}else{
+		//wg.setColor(new Color(0xff,0xff,0xff,0x10));
+
+
+	}
+}
+    	for(int y=1;y<hi-1;y++)
+    		for(int x=1;x<wh-1;x++)
+    			d1[x][y]=d2[x][y];
+    	MyTorus();
+    	wg.setColor(Color.BLACK);
+}
+wg.setColor(Color.BLACK);
+wg.drawRect(30+x1,30+y1,(wh-2)*s,(wh-2)*s);
+
+
+if(c){
+	if(cx1>cx2){
+		int tmp=cx1;
+		cx1=cx2;
+		cx2=tmp;
+	}
+	if(cy1>cy2){
+		int tmp=cy1;
+		cy1=cy2;
+		cy2=tmp;
+	}
+
+	wg.setColor(Color.red);
+	wg.drawRect(30+x1+(cx3-1)*s,30+y1+(cy3-1)*s,(cx2-cx1+1)*s,(cy2-cy1+1)*s);
+}
+//System.out.println(""+c+","+cx1+","+cx2+","+cy1+","+cy2);
+g.drawImage(wi,0,0,this);
+    }}
+    public void update(Graphics g){
+        paint(g);
+    }
+
+    public void mouseDragged(MouseEvent e) {System.out.println("d");
+		int px=(e.getX()-30-x1)/s+1;
+		int py=(e.getY()-30-y1)/s+1;
+		int modi=e.getModifiers();
+		if(!ss){
+		if ((modi&MouseEvent.BUTTON1_MASK)!=0) {
+			d2[px][py]=!ha;
+		}
+		if ((modi&MouseEvent.BUTTON2_MASK)!=0) {
+
+			x1=e.getX()-x2;
+			y1=e.getY()-y2;
+		}
+		if ((modi&MouseEvent.BUTTON3_MASK)!=0) {
+				cx2=px;
+				cy2=py;
+		}
+
+		}
+		repaint();
+
+	}
+	public void mouseMoved(MouseEvent e) {
+		int modi=e.getModifiers();
+		int px=(e.getX()-30-x1)/s+1;
+		int py=(e.getY()-30-y1)/s+1;
+
+
+	}
+
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		//x1=e.getX();
+		//y1=e.getY();
+		s+=e.getWheelRotation();
+		repaint();
+	}
+	Boolean cp=false;
+
+	int x2=0,y2=0;
+	public void mousePressed(MouseEvent e) {System.out.println("p");
+		int modi=e.getModifiers();
+		int px=(e.getX()-30-x1)/s+1;
+		int py=(e.getY()-30-y1)/s+1;
+		if ((modi&MouseEvent.BUTTON1_MASK)!=0) {
+			ha=d2[px][py];
+		}
+		if ((modi&MouseEvent.BUTTON2_MASK)!=0) {
+			x2=e.getX()-x1;
+			y2=e.getY()-y1;
+		}
+		if ((modi&MouseEvent.BUTTON3_MASK)!=0) {
+			cx3=px;
+			cy3=py;
+			cx1=px;
+			cy1=py;
+		}
+
+	}
+	public void mouseClicked(MouseEvent e) {System.out.println("c");
+		int px=(e.getX()-30-x1)/s+1;
+		int py=(e.getY()-30-y1)/s+1;
+		int modi=e.getModifiers();
+		if(!ss){
+		if ((modi&MouseEvent.BUTTON1_MASK)!=0) {
+			if(c){
+				for(int x=0;x<=cx2-cx1;x++)
+					for(int y=0;y<=cy2-cy1;y++){
+						if(hc){
+							d1[cx3+x][cy3+y]|=cd[x][y];
+							d2[cx3+x][cy3+y]|=cd[x][y];
+						}else{
+							d1[cx3+x][cy3+y]=cd[x][y];
+							d2[cx3+x][cy3+y]=cd[x][y];
+						}
+
+					}
+			}
+			else
+			d2[px][py]=true;
+		}
+		if ((modi&MouseEvent.BUTTON3_MASK)!=0) {
+			d2[px][py]=false;
+		}
+
+		}
+		repaint();
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		int modi=e.getModifiers();
+		int px=(e.getX()-30-x1)/s+1;
+		int py=(e.getY()-30-y1)/s+1;
+		if(c)
+		if ((modi&MouseEvent.BUTTON1_MASK)!=0) {
+			cx3=px;
+			cy3=py;
+			repaint();
+		}
+	if ((modi&MouseEvent.BUTTON3_MASK)!=0) {
+		cx2=px;
+		cy2=py;
+
+		for(int y=0;y<=cx2-cx1;y++)
+			for(int x=0;x<=cx2-cy1;x++){
+				cd[x][y]=d2[cx1+x][cy1+y];
+			}
+		repaint();
+	}
+}
+	public void mouseEntered(MouseEvent e) {
+
+	}
+	public void mouseExited(MouseEvent e) {
+
+	}
+	String a="";
+	public void actionPerformed(ActionEvent e) {
+		b.setLabel("停止");
+
+		if (ss){
+			b.setLabel("再生");
+			setumei=false;
+
+			  }
+				  if(e.getSource() ==txt[0]||
+						  e.getSource() ==txt[1]){
+					  wh=Integer.parseInt(txt[0].getText());
+						hi=Integer.parseInt(txt[1].getText());
+						if(wh<hi)	s=440/(hi-2);
+						else		s=440/(wh-2);
+						 d1=new boolean[wh][hi];
+						    d2=new boolean[wh][hi];
+						    cd=new boolean[wh][hi];
+						    for(int y=1;y<hi-1;y++)
+						    for(int x=1;x<wh-1;x++){
+						    	d1[x][y]=r.nextBoolean();
+						    	d2[x][y]=r.nextBoolean();
+						    }
+
+
+			  }
+		 if(e.getSource() ==b3){
+			 c=false;
+			 a=txt[3].getText();
+			 switch(a.charAt(0)){
+				 case 'R'://ランダム
+			  wh=Integer.parseInt(txt[0].getText());
+				hi=Integer.parseInt(txt[1].getText());
+				 d1=new boolean[wh][hi];
+				    d2=new boolean[wh][hi];
+				    for(int y=1;y<hi-1;y++)
+				    for(int x=1;x<wh-1;x++){
+				    	d1[x][y]=r.nextBoolean();
+				    	d2[x][y]=r.nextBoolean();
+				    }
+				    	break;
+				 case 'H'://ホワイト
+					 wh=Integer.parseInt(txt[0].getText());
+						hi=Integer.parseInt(txt[1].getText());
+
+						 d1=new boolean[wh][hi];
+						    d2=new boolean[wh][hi];
+						    break;
+				 case 'E'://エクスプレイン
+					 setumei=true;
+						    break;
+				 case 'U'://有名なもの
+					 switch(a.charAt(1)){
+					 case '1': txt[3].setText("00000621846524a05244021806000050018231880494a050c6020000000020600512682985810000000000000000000000000016");
+						 break;
+					 case '2': txt[3].setText("00000000000010038140002800008000000000000000000030180401000802030060000000000000000000000000000000000016");
+					 break;
+					 case '3': txt[3].setText("0000000000000000000000000000000000000000000000000024000400e044080780400000000000000000000000000000000016");
+					 break;
+					 case '4': txt[3].setText("0000000000000000000000000000004000000000141000005006050000180001814002001c006000000407080030008100000a200020c00218000028800500000861800000001450000000001000030000000000a0000000002000000000000000000000000000000000000001c00000000040000000000800000000000c000000000200000000007000000000040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002c");
+					 break;
+					 }
+				 case 'C'://コピー
+					 c=true;
+					 switch(a.charAt(1)){
+					 case '1': hc=true;
+					 break;
+					 case '2': hc=false;
+					 break;
+					 }
+						    break;
+				 case 'F'://フルスクリーン
+					f=true;
+
+
+						    break;
+				    	default:Mywrite();
+				    }
+				    }
+
+		  if (e.getSource() == b)ss=!ss;
+		  if (e.getSource() == b4){
+			  nextGeneration();
+		  }
+		  if(e.getSource() ==b2)Myread();
+		  if (e.getSource() == txt[2])n=Integer.parseInt(txt[2].getText());
+
+		  if (e.getSource() == txt[4])if(txt[4].getText().charAt(0)=='n'){
+			  im=true;
+		  }else{
+			  String page = txt[4].getText();
+		    	try {
+		    	URL url = new URL( page );
+		    	image = getImage(url);
+		    	im=false;
+		    	} catch(java.net.MalformedURLException en) {
+		    	System.out.println("The " + page + " is incorrect.");
+		    	}
+		  }
+		/*  if (e.getSource() == b2){
+			  ss=!ss;
+		  }*/
+
+		  repaint();
+	}
+
+	public void nextGeneration(){
+		for(int y=1;y<hi-1;y++)
+    	    for(int x=1;x<wh-1;x++){
+    	    	int c=d1[x-1][y-1]?1:0;
+    	    	c+=d1[x][y-1]?1:0;
+    	    	c+=d1[x+1][y-1]?1:0;
+    	    	c+=d1[x+1][y]?1:0;
+    	    	c+=d1[x+1][y+1]?1:0;
+    	    	c+=d1[x][y+1]?1:0;
+    	    	c+=d1[x-1][y+1]?1:0;
+    	    	c+=d1[x-1][y]?1:0;
+    	    	switch(c){
+    	    	//case 2:
+    	    	case 3:
+    	    		d2[x][y]=true;
+    	    	break;
+    	    	case 0:
+    	    	case 1:
+    	    			case 4:
+    	    				case 5:
+    	    	case 6:
+    	    	case 7:
+    	    		case 8:
+    	    		d2[x][y]=false;
+    	    		break;
+    	    	}
+    	    }
+		repaint();
+        try{
+            Thread.sleep(n);
+        }
+        catch(InterruptedException e){
+        }
+	}
+	public void MyExplanation(){
+		wg.setFont(new Font(Font.SERIF,Font.BOLD,32));
+		wg.drawString("ゲーム説明", 170, 64);
+		wg.drawString("操作説明", 170, 150);
+		wg.setFont(new Font(Font.SERIF,Font.BOLD,15));
+		wg.drawString("このゲームは生命の誕生、進化、淘汰などのプロセスを", 50, 80);
+		wg.drawString(" 簡易的なモデルで再現したシミュレーションゲームです。", 50, 95);
+		wg.drawString("詳しくは「lifegame」で検索してください。", 50, 110);
+		wg.setColor(Color.red);
+		wg.drawString("始めるには停止/再生ボタンをダブルクリックしてください", 35, 465);
+		wg.setFont(new Font(Font.SERIF,Font.BOLD,10));
+		wg.drawString("　　　※観賞用なので終了する以外の操作はできません（現在使用不可）", 50, 360);
+		wg.setColor(Color.BLACK);
+
+		wg.drawString("上のx、yはそれぞれ横のセル数+２,縦のセル数+２を表しています。", 50, 160);
+		wg.drawString("sは小さいと早く大きいとゆっくりになります。", 50, 170);
+
+		wg.drawString("下の復活の呪文は読み込みボタンを押すとでデータを文字にできます", 50, 180);
+		wg.drawString("メモ帳などで保存して復活させたいとき復活の呪文のところに", 50, 190);
+		wg.drawString("張り付けて書き込みボタンを押すと復活できます。", 50, 200);
+		wg.drawString("また以下のようなコマンドをいれてき書き込みボタンを押すことで実行もできます。", 50, 210);
+
+		wg.drawString("「H」:ホワイト、全部白にする", 50, 220);
+		wg.drawString("「R」:ランダム、で配置する", 50, 230);
+		wg.drawString("「E」:エクスプレイン、この説明をもう一回出す", 50, 240);
+		wg.drawString("有名な形", 50, 250);
+		wg.drawString("「U1」:固定物体,左上からブロック、蜂の巣、池、タブ", 50, 260);
+		wg.drawString("　　　　　　　　　　　　ボート、パン、船、イーター", 50, 270);
+		wg.drawString("　　　　　　　　　　　　はしけ、空母、蛇という愛称があります", 50, 280);
+		wg.drawString("「U2」:振動子,左上からブリンカー、時計、ビーコン、ヒキガエル", 50, 290);
+		wg.drawString("「U3」:移動型,左が宇宙船、右がグラインダー", 50, 300);
+		wg.drawString("「U4」:グラインダー銃", 50, 310);
+		wg.drawString("「C」:コピー,右ドラッグで範囲指定をし左クリックで貼り付けます", 50, 320);
+		wg.drawString("「C1」:OR,デフォルトで貼り付けの時ORになります", 50, 330);
+		wg.drawString("「C2」:上書き,貼り付けの時上書きするよう変更します", 50, 340);
+		wg.drawString("「F」:フルスクリーン,観賞用でマウスをスクロールするとアプレットを終了できます", 50, 350);
+
+		wg.drawString("左ドラッグでセルの状態を入れ替えることができます", 50, 380);
+		wg.drawString("ホイールボタンをスクロールすることで拡大/縮小ができます", 50, 390);
+		wg.drawString("ホイールボタンをドラッグすると平行移動できます", 50, 400);
+
+		wg.drawString("画像URLはネット上の画像をhtml://(中略).(画像圧縮形式)かコピーをし張り付けると", 50, 420);
+		wg.drawString("セルがその画像に変わりますまたファイヤーフォックスかクロームで自分の画像を", 50, 430);
+		wg.drawString("ドラックしURLのところを画像URLに張り付けてもできます", 50, 440);
+		wg.drawString("noneと打ち込むと元に戻ります", 50, 450);
+
+	}
+
+	public void MyTorus(){
+	    for(int x=1;x<wh-1;x++){
+		    	d1[x][0]=d2[x][hi-2];
+		    	d1[x][hi-1]=d2[x][1];
+		    }
+	    for(int y=1;y<hi-1;y++){
+	    	d1[0][y]=d2[wh-2][y];
+	    	d1[wh-1][y]=d2[1][y];
+	    }
+	    d1[0][0]=d2[wh-2][hi-2];
+    	d1[wh-1][hi-1]=d2[1][1];
+    	d1[wh-1][0]=d2[1][hi-2];
+    	d1[0][hi-1]=d2[wh-2][1];
+	}
+	public void Myread(){
+		String a = "";
+		int a2 = 0 ;
+
+		for(int b=0;b<(wh-2)*(hi-2);){
+			if(d1[b%(wh-2)+1][b/(wh-2)+1]){
+				a2+=1<<(4-b%4)-1;
+			}
+			b++;
+			if(b%4==0){
+				a+=Integer.toHexString(a2);
+				a2 = 0;
+			}
+		}
+
+		for(int i=0;i<4-Integer.toHexString(wh).length();i++)a+="0";
+		a+=Integer.toHexString(wh);
+
+	    txt[3].setText(a);
+	}
+	public void Mywrite(){
+		String a=txt[3].getText();
+		int l=a.length()-4;
+
+		int w=Integer.parseInt(a.substring(l),16);
+		wh=w;
+		hi=4*l/(w-2)+2;
+		txt[0].setText(""+w);
+		s=440/hi;
+		txt[1].setText(""+hi);
+
+		d1=new boolean[wh][hi];
+	    d2=new boolean[wh][hi];
+	    cd=new boolean[wh][hi];
+	    for(int c=0;c<l*4;c++){
+
+	    	d2[c%(wh-2)+1][c/(wh-2)+1]=(1==(Integer.parseInt(""+a.charAt((c+4)/4-1),16)
+					%(1<<(4-c%4)))
+					>>(3-c%4));
+		}
+
+
+	}
+	int time=0;
+	double a1=0.01;
+	int kaku=5;
+	Dimension dim ;
+	Graphics fg;
+
+	public class NoFrameWindowOld extends Window implements MouseWheelListener {
+		//Eclipseの場合、シリアライズ可能クラスでこれがないと警告が出る
+		private static final long serialVersionUID=0;
+		//ウィンドウ消去ボタン（Frameのようにボタンがないので必要）
+		Button exitButton=new Button("終了");
+		//
+		public NoFrameWindowOld(){
+			//
+			super(new Frame());	//呼び出したFrameを指定せねばいけないので仕方なく
+			addMouseWheelListener(this);
+
+
+			System.out.println(""+s);
+			while(true){
+
+			JPanel panel=new JPanel();
+
+	panel.print(fg);
+	add(panel,BorderLayout.CENTER);
+			time++;
+			repaint();
+			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO 自動生成された catch ブロック
+				e.printStackTrace();
+			}
+			nextGeneration();
+		}}
+		public void update(Graphics g){
+	        paint(g);
+	    }
+		Double hs,ws;
+		 public void paint( Graphics g ){                      //superクラスから描画する処理を呼び出す
+			 hs=this.getHeight()/(hi-2d);
+			 ws=this.getWidth()/(wh-2d);
+			 if(im)
+			    	for(int y=0;y<hi-2;y++)
+			for(int x=0;x<wh-2;x++)
+				if(d2[x+1][y+1]){
+					wg.setColor(Color.BLACK);
+					wg.fillRect((int)(x*ws),(int)(y*hs),(int)(ws+1),(int)(hs+1));
+					//g.drawImage(img, x*s+10+x1, y*s+20+y1,s,s, this);
+				}else{
+					//wg.setColor(new Color(0xff,0xff,0xff,0x10));
+					wg.setColor(Color.white);
+					wg.fillRect((int)(x*ws),(int)(y*hs),(int)(ws+1),(int)(hs+1));
+				}
+			else{
+
+				wg.setColor(new Color(0xff,0xff,0xff,0x7f));
+				wg.fillRect(0,0,this.getWidth(),this.getHeight());
+				for(int y=0;y<hi-2;y++)
+					for(int x=0;x<wh-2;x++)
+				if(d2[x+1][y+1]){
+					wg.drawImage(image, (int)(x*ws),(int)(y*hs),(int)(ws+1),(int)(hs+1), this);
+				}else{
+
+				}
+			}
+			    	for(int y=1;y<hi-1;y++)
+			    		for(int x=1;x<wh-1;x++)
+			    			d1[x][y]=d2[x][y];
+			    	MyTorus();
+			    	g.drawImage(wi,0,0,this);
+		    }
+
+		@Override
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			// TODO 自動生成されたメソッド・スタブ
+			dispose();
+			System.exit(0);//dispose();
+		}
+
+	}
+}
